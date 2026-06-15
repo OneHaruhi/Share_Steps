@@ -169,9 +169,7 @@ export default function App() {
       {route === '/' ? <HomePage date={demoDate} profile={profile} userId={session.user.id} /> : null}
       {route === '/groups' ? <GroupsPage userId={session.user.id} navigate={navigate} /> : null}
       {groupId ? <GroupDetailPage date={demoDate} groupId={groupId} navigate={navigate} /> : null}
-      {route === '/mypage' ? (
-        <MyPage date={demoDate} profile={profile} onProfileUpdated={setProfile} />
-      ) : null}
+      {route === '/mypage' ? <MyPage profile={profile} onProfileUpdated={setProfile} /> : null}
       {!['/', '/groups', '/mypage'].includes(route) && !groupId ? (
         <section className="page-stack">
           <div className="page-title">
