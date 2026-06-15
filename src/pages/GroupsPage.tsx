@@ -2,16 +2,20 @@ import { FormEvent, useEffect, useState } from 'react';
 import { DoorOpen, Plus, Users } from 'lucide-react';
 import { EmptyState } from '../components/EmptyState';
 import { Message } from '../components/Message';
-import { createGroup, getMyGroups, joinGroupByInviteCode } from '../lib/api';
-import type { Group } from '../types';
+import { createGroup, getGroupMembers, getMyGroups, joinGroupByInviteCode } from '../lib/api';
+import type { Group, GroupMember } from '../types';
 
 type GroupsPageProps = {
   userId: string;
   navigate: (path: string) => void;
 };
 
+type GroupWithMembers = Group & {
+  members: GroupMember[];
+};
+
 export function GroupsPage({ userId, navigate }: GroupsPageProps) {
-  const [groups, setGroups] = useState<Group[]>([]);
+  const [groups, setGroups] = useState<GroupWithMembers[]>([]);
   const [groupName, setGroupName] = useState('');
   const [inviteCode, setInviteCode] = useState('');
   const [loading, setLoading] = useState(true);
@@ -26,7 +30,13 @@ export function GroupsPage({ userId, navigate }: GroupsPageProps) {
 
     try {
       const rows = await getMyGroups(userId);
-      setGroups(rows);
+      const groupsWithMembers = await Promise.all(
+        rows.map(async (group) => ({
+          ...group,
+          members: await getGroupMembers(group.id),
+        })),
+      );
+      setGroups(groupsWithMembers);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'グループ一覧の読み込みに失敗しました。');
     } finally {
@@ -145,15 +155,30 @@ export function GroupsPage({ userId, navigate }: GroupsPageProps) {
           <EmptyState title="まだグループがありません" description="グループを作成するか、友達から届いた招待コードで参加できます。" />
         ) : null}
         <div className="group-list">
-          {groups.map((group) => (
-            <button className="group-row" key={group.id} type="button" onClick={() => navigate(`/groups/${group.id}`)}>
-              <span>
-                <strong>{group.name}</strong>
-                <small>招待コード: {group.invite_code}</small>
-              </span>
-              <span className="row-arrow">詳細</span>
-            </button>
-          ))}
+          {groups.map((group) => {
+            const visibleMembers = group.members.slice(0, 3);
+            const remainingMemberCount = group.members.length - visibleMembers.length;
+
+            return (
+              <button className="group-row" key={group.id} type="button" onClick={() => navigate(`/groups/${group.id}`)}>
+                <div className="group-row-content">
+                  <strong>{group.name}</strong>
+                  <small>招待コード: {group.invite_code}</small>
+                  <div className="group-member-preview">
+                    {visibleMembers.map((member) => (
+                      <span className="group-member-name" key={member.id}>
+                        {member.profile?.username ?? '未設定ユーザー'}
+                      </span>
+                    ))}
+                    {remainingMemberCount > 0 ? (
+                      <span className="group-more-members">ほか{remainingMemberCount}人</span>
+                    ) : null}
+                  </div>
+                </div>
+                <span className="row-arrow">詳細</span>
+              </button>
+            );
+          })}
         </div>
       </section>
     </section>

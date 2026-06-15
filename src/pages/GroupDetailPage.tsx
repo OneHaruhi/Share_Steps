@@ -18,8 +18,6 @@ export function GroupDetailPage({ date, groupId, navigate }: GroupDetailPageProp
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
-  const visibleMembers = members.slice(0, 3);
-  const remainingMemberCount = members.length - visibleMembers.length;
 
   useEffect(() => {
     let ignore = false;
@@ -125,15 +123,12 @@ export function GroupDetailPage({ date, groupId, navigate }: GroupDetailPageProp
                 <h2>メンバー</h2>
               </div>
               <div className="member-list">
-                {visibleMembers.map((member) => (
+                {members.map((member) => (
                   <div className="member-row" key={member.id}>
                     <span>{member.profile?.username ?? '未設定ユーザー'}</span>
                     <small>目標 {Number(member.profile?.target_steps ?? 8000).toLocaleString()}歩</small>
                   </div>
                 ))}
-                {remainingMemberCount > 0 ? (
-                  <p className="remaining-members">ほか{remainingMemberCount}人</p>
-                ) : null}
               </div>
             </section>
 

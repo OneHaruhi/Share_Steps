@@ -402,12 +402,35 @@ input:focus {
   gap: 4px;
 }
 
-.remaining-members {
-  margin: 0;
-  padding: 4px 14px 0;
-  color: #687587;
+.group-row-content {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.group-member-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.group-row .group-member-name,
+.group-row .group-more-members {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: #e8f3f2;
+  color: #145e5a;
+  font-size: 0.78rem;
   font-weight: 800;
-  text-align: right;
+}
+
+.group-row .group-more-members {
+  background: #eef2f6;
+  color: #536171;
 }
 
 small {
