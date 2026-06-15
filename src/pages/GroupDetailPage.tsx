@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { ArrowLeft, Copy, Trophy, Users } from 'lucide-react';
 import { EmptyState } from '../components/EmptyState';
 import { Message } from '../components/Message';
@@ -14,7 +14,7 @@ type GroupDetailPageProps = {
 export function GroupDetailPage({ date, groupId, navigate }: GroupDetailPageProps) {
   const [group, setGroup] = useState<Group | null>(null);
   const [members, setMembers] = useState<GroupMember[]>([]);
-  const [ranking, setRanking] = useState<RankingRow[]>([]);
+  const [rankingData, setRankingData] = useState<RankingRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -42,7 +42,7 @@ export function GroupDetailPage({ date, groupId, navigate }: GroupDetailPageProp
         if (!ignore) {
           setGroup(groupRow);
           setMembers(memberRows);
-          setRanking(rankingRows);
+          setRankingData(rankingRows);
         }
       } catch (err) {
         if (!ignore) {
@@ -74,6 +74,20 @@ export function GroupDetailPage({ date, groupId, navigate }: GroupDetailPageProp
       setNotice('招待コードを選択してコピーしてください。');
     }
   }
+
+  const ranking = useMemo(() => {
+    if (rankingData.length === 0) {
+      return [];
+    }
+
+    const maxSteps = Math.max(...rankingData.map((row) => Math.max(row.steps, row.targetSteps)), 1);
+
+    return rankingData.map((row) => ({
+      ...row,
+      percent: Math.min((row.steps / maxSteps) * 100, 100),
+      targetPercent: Math.min((row.targetSteps / maxSteps) * 100, 100),
+    }));
+  }, [rankingData]);
 
   return (
     <section className="page-stack">
@@ -133,13 +147,26 @@ export function GroupDetailPage({ date, groupId, navigate }: GroupDetailPageProp
               ) : (
                 <div className="ranking-list">
                   {ranking.map((row) => (
-                    <div className="ranking-row" key={row.userId}>
+                    <div className="ranking-viz-row" key={row.userId}>
                       <span className="rank-number">{row.rank}</span>
-                      <span className="ranking-user">
-                        <strong>{row.username}</strong>
-                        <small>{row.achieved ? '達成' : `あと ${Math.max(row.targetSteps - row.steps, 0).toLocaleString()}歩`}</small>
+                      <span className="viz-username">{row.username}</span>
+                      <div className="viz-bar-container">
+                        <span
+                          className="viz-target"
+                          style={{ left: `${row.targetPercent}%` }}
+                          title={`目標 ${row.targetSteps.toLocaleString()}歩`}
+                        />
+                        <div
+                          aria-label={`${row.username}: ${row.steps.toLocaleString()}歩`}
+                          className={`viz-bar ${row.achieved ? 'achieved' : ''}`}
+                          role="img"
+                          style={{ '--bar-width': `${row.percent}%` } as CSSProperties}
+                        />
+                      </div>
+                      <span className="viz-value">
+                        {row.steps.toLocaleString()}歩
+                        <small>目標 {row.targetSteps.toLocaleString()}歩</small>
                       </span>
-                      <span className="ranking-steps">{row.steps.toLocaleString()}歩</span>
                     </div>
                   ))}
                 </div>

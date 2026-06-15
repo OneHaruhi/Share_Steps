@@ -38,6 +38,8 @@ VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 
+Vercel Supabase Integration などで `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` / `SUPABASE_URL` / `SUPABASE_ANON_KEY` が設定されている場合も、ビルド時に自動で読み取ります。手動設定する場合は `VITE_` 付きの2つを使うのが一番確実です。
+
 ## Supabase SQL実行手順
 
 1. Supabaseで新規プロジェクトを作成します。
@@ -87,7 +89,9 @@ Viteの環境変数はビルド時に埋め込まれます。Vercelでは、デ�
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 
-設定対象のEnvironmentは、公開URLがProductionなら `Production`、プレビューURLなら `Preview` にもチェックを入れます。設定後は既存デプロイには反映されないため、必ずRedeployしてください。
+設定対象のEnvironmentは、公開URLがProductionなら `Production`、プレビューURLなら `Preview` にもチェックを入れます。設定後は既存デプロイには反映されないため、必ずRedeployしてください。`vercel.json` でSPA向けのrewriteを設定しているため、`/groups/:id` などを直接開いた場合も `index.html` に戻ります。
+
+メール確認を有効にする場合は、Supabase Dashboard > Authentication > URL Configuration でVercelの公開URLを Site URL または Redirect URLs に追加してください。アプリ側は登録時に現在の公開URLへ戻るよう `emailRedirectTo` を指定しています。
 
 ## 画面
 
