@@ -410,6 +410,145 @@ input:focus {
   text-align: right;
 }
 
+.step-history-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.step-history-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.step-history-heading .section-heading {
+  margin-bottom: 0;
+}
+
+.period-tabs {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 8px;
+  background: #eef2f6;
+}
+
+.period-tabs button {
+  min-width: 64px;
+  min-height: 36px;
+  border: 0;
+  border-radius: 6px;
+  color: #536171;
+  background: transparent;
+  font-weight: 800;
+}
+
+.period-tabs button.active {
+  color: #ffffff;
+  background: #14213d;
+}
+
+.step-history-summary {
+  display: flex;
+  gap: 28px;
+}
+
+.step-history-summary span {
+  display: grid;
+  gap: 4px;
+}
+
+.step-history-summary strong {
+  color: #14213d;
+  font-size: 1.35rem;
+}
+
+.step-chart-scroll {
+  overflow-x: auto;
+  padding: 26px 4px 4px;
+}
+
+.step-chart {
+  position: relative;
+  height: 260px;
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  border-bottom: 1px solid #cfd7e2;
+}
+
+.step-chart-scroll.week .step-chart {
+  min-width: 620px;
+}
+
+.step-chart-scroll.month .step-chart {
+  min-width: 1300px;
+  gap: 5px;
+}
+
+.step-target-line {
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: 1px;
+  border-top: 1px dashed #b42318;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.step-target-line span {
+  position: absolute;
+  right: 0;
+  bottom: 5px;
+  color: #8f1d14;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.step-bar-item {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  grid-template-rows: 22px 1fr 32px;
+  gap: 5px;
+  text-align: center;
+}
+
+.step-bar-value {
+  color: #536171;
+  font-size: 0.7rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.step-bar-track {
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  border-radius: 5px 5px 0 0;
+  background: linear-gradient(to top, #f4f7f9, #fbfcfe);
+  overflow: hidden;
+}
+
+.step-bar {
+  width: 100%;
+  min-height: 0;
+  border-radius: 5px 5px 0 0;
+  background: #6b879b;
+}
+
+.step-bar.achieved {
+  background: #0b7a75;
+}
+
+.step-bar-label {
+  color: #687587;
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 small {
   color: #687587;
   font-weight: 700;
@@ -613,6 +752,19 @@ small {
     align-items: stretch;
     flex-direction: column;
     gap: 8px;
+  }
+
+  .step-history-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .period-tabs {
+    align-self: flex-start;
+  }
+
+  .step-history-summary {
+    gap: 20px;
   }
 
   .ranking-viz-row {

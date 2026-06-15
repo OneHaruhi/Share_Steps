@@ -1,12 +1,20 @@
 const DEMO_DATE_STORAGE_KEY = 'share-steps-demo-date';
 
-export function getTodayDateString() {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
+function formatDateString(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
 
   return `${year}-${month}-${day}`;
+}
+
+function parseDateString(value: string) {
+  const [year, month, day] = value.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+export function getTodayDateString() {
+  return formatDateString(new Date());
 }
 
 export function getInitialDemoDate() {
@@ -25,6 +33,30 @@ export function saveDemoDate(date: string) {
 export function resetDemoDate() {
   window.localStorage.removeItem(DEMO_DATE_STORAGE_KEY);
   return getTodayDateString();
+}
+
+export type StepHistoryPeriod = 'week' | 'month';
+
+export function getStepHistoryDates(dateString: string, period: StepHistoryPeriod) {
+  const selectedDate = parseDateString(dateString);
+  let startDate: Date;
+  let numberOfDays: number;
+
+  if (period === 'week') {
+    const daysFromMonday = (selectedDate.getDay() + 6) % 7;
+    startDate = new Date(selectedDate);
+    startDate.setDate(selectedDate.getDate() - daysFromMonday);
+    numberOfDays = 7;
+  } else {
+    startDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+    numberOfDays = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate();
+  }
+
+  return Array.from({ length: numberOfDays }, (_, index) => {
+    const date = new Date(startDate);
+    date.setDate(startDate.getDate() + index);
+    return formatDateString(date);
+  });
 }
 
 function isValidDateString(value: string) {

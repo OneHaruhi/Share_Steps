@@ -177,6 +177,22 @@ export async function getTodayStep(userId: string, date: string) {
   return data as StepRecord | null;
 }
 
+export async function getStepRecords(userId: string, startDate: string, endDate: string) {
+  const { data, error } = await supabase
+    .from('step_records')
+    .select('*')
+    .eq('user_id', userId)
+    .gte('date', startDate)
+    .lte('date', endDate)
+    .order('date', { ascending: true });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data ?? []) as StepRecord[];
+}
+
 export async function upsertTodayStep(userId: string, date: string, steps: number) {
   const { data, error } = await supabase
     .from('step_records')
